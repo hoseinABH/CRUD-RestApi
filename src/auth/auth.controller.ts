@@ -6,8 +6,13 @@ import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('/users')
+  @Post('/signup')
   signUp(@Body(ValidationPipe) authCredentials: AuthCredentials) {
     return this.authService.signUp(authCredentials);
+  }
+
+  @Post('/signin')
+  signIn(@Body(ValidationPipe) authCredentials: AuthCredentials) {
+    return this.authService.singIn(authCredentials);
   }
 }

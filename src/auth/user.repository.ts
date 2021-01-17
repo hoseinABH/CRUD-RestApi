@@ -2,10 +2,7 @@ import { AuthCredentials } from './dto/auth-credentials.dto';
 import { User } from './user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import {
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ConflictException, InternalServerErrorException } from '@nestjs/common';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -25,6 +22,16 @@ export class UserRepository extends Repository<User> {
       } else {
         throw new InternalServerErrorException();
       }
+    }
+  }
+
+  async validateUserPassword(authCredentials: AuthCredentials): Promise<string> {
+    const { username, password } = authCredentials;
+    const user = await this.findOne({ username });
+    if (user && (await user.validatePassword(password))) {
+      return user.username;
+    } else {
+      return null;
     }
   }
 
